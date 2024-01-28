@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
-
+import logger from "../../services/logger.js";
 const configureMiddleware = (app) => {
     try {
         dotenv.config();
@@ -12,8 +12,8 @@ const configureMiddleware = (app) => {
 
         app.use(cors());
         return app;
-    } catch (error) {
-        console.log("error in middleware", error);
+    } catch (ex) {
+        logger.error(`[critical-error]- ${JSON.stringify(ex)}`);
     }
 };
 
