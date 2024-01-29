@@ -4,6 +4,7 @@ import configureMiddleware from "./utils/server/configureMiddleware.js";
 import logger from "./services/logger.js";
 import pulse from "./utils/heartbeat.js";
 import { getRoutes } from "./routes/index.js";
+
 (async function main() {
     try {
         logger.info("Starting server...");
