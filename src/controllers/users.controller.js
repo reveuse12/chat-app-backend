@@ -47,3 +47,43 @@ export const registerUser = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const loginUser = async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        if (!username || !password)
+            return res.status(400).json({ message: "Please fill all fields" });
+
+        const user = await User.findOne({ username }).select("+password");
+
+        if (!user) return res.status(400).json({ message: "User not found" });
+
+        const isPasswordCorrect = await user.isPasswordCorrect(password);
+
+        if (!isPasswordCorrect)
+            return res.status(400).json({ message: "Invalid Password" });
+
+        const { token, refreshToken } = await generateTokenAndRefreshTokens(
+            user._id
+        );
+
+        const loggedInUser = await User.findById(user._id).select(
+            "-password -refreshToken"
+        );
+
+        const options = {
+            httpOnly: true,
+            secure: true,
+        };
+
+        res.status(200).json({
+            user: loggedInUser,
+            token,
+            refreshToken,
+            options,
+            message: "User Logged In Successfully",
+        });
+    } catch (error) {
+        res.status(500).json({ message: error });
+    }
+};

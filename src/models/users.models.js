@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema(
             required: true,
             minlength: 3,
             maxlength: 20,
-            unique: true, // Corrected typo "unquie" to "unique"
+            unique: true,
             trim: true,
             lowercase: true,
         },
@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
             required: true,
             lowercase: true,
             trim: true,
-            unique: true, // Corrected typo "unquie" to "unique"
+            unique: true,
         },
         password: {
             type: String,
@@ -30,7 +30,6 @@ const userSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-// Define the pre-save middleware
 userSchema.pre("save", async function (next) {
     if (!this.isModified("password")) return next();
 
@@ -38,7 +37,6 @@ userSchema.pre("save", async function (next) {
     next();
 });
 
-// Define instance methods
 userSchema.methods.isPasswordCorrect = async function (password) {
     return await bcrypt.compare(password, this.password);
 };
@@ -57,7 +55,6 @@ userSchema.methods.generateRefreshToken = function () {
     });
 };
 
-// Compile the model from the schema
 const User = mongoose.model("User", userSchema);
 
 export default User;
