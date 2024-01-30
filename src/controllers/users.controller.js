@@ -87,3 +87,42 @@ export const loginUser = async (req, res) => {
         res.status(500).json({ message: error });
     }
 };
+
+export const logoutUser = async (req, res) => {
+    try {
+        const { refreshToken } = req.body;
+        const user = await User.findById(req.user?._id);
+        if (!user) return res.status(400).json({ message: "User not found" });
+
+        user.refreshTokens = user.refreshTokens.filter(
+            (token) => token !== refreshToken
+        );
+
+        await user.save({ validateBeforeSave: false });
+
+        res.status(200).json({ message: "User Logged Out Successfully" });
+    } catch (error) {
+        res.status(500).json({ message: error });
+    }
+};
+
+export const changePassword = async (req, res) => {
+    try {
+        const { oldPassword, newPassword } = req.body;
+
+        const user = await User.findById(req.user?._id);
+
+        const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+
+        if (!isPasswordCorrect)
+            return res.status(400).json({ message: "Invalid Password" });
+
+        user.password = newPassword;
+
+        await user.save({ validateBeforeSave: false });
+
+        res.status(200).json({ message: "Password Changed Successfully" });
+    } catch (error) {
+        res.status(500).json({ message: error });
+    }
+};

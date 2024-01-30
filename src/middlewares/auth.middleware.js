@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { User } from "../models/user.js";
+import User from "../models/users.models.js";
 
 export const isAuthenticated = async (req, res, next) => {
     try {
@@ -10,7 +10,7 @@ export const isAuthenticated = async (req, res, next) => {
 
         if (!token)
             return res.status(401).json({
-                message: "UnAthorize Request",
+                message: "UnAuthorize Request",
             });
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -20,7 +20,7 @@ export const isAuthenticated = async (req, res, next) => {
         );
 
         if (!user)
-            return res.status(401).json({ message: "UnAthorize Request" });
+            return res.status(401).json({ message: "UnAuthorize Request" });
 
         req.user = user;
         next();
